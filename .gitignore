@@ -1,1 +1,3 @@
 tf/.terraform/
+**/.DS_Store
+lambda_functions/**/*.zip
