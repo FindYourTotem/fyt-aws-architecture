@@ -1,13 +1,3 @@
-resource "aws_lambda_function" "lambda_iot" {
-  filename         = "../lambda_functions/lambda_iot.zip"
-  function_name    = "lambda_iot"
-  role             = "arn:aws:iam::041767885136:role/DL-Lambda-Role"
-  handler          = "lambda_function.lambda_handler"
-  source_code_hash = "${base64sha256(file("../lambda_functions/lambda_iot.zip"))}"
-  runtime          = "python3.6"
-  description      = "[Terraform] Lambda function for lambda iot"
-}
-
 resource "aws_lambda_function" "lambda_rekognition" {
   filename         = "../lambda_functions/lambda_rekognition.zip"
   function_name    = "lambda_rekognition"
@@ -32,4 +22,3 @@ resource "aws_s3_bucket_notification" "s3_invoke_rekognition" {
     events              = ["s3:ObjectCreated:*"]
   }
 }
-
