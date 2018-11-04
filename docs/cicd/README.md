@@ -12,7 +12,7 @@ We use CodeBuild to automatically build/compiled our code and upload the compile
 
 Go to the [CodeBuild Homepage](https://console.aws.amazon.com/codesuite/codebuild/home) and select "Create Project".
 
-![CodeBuild Homepage](codebuild_homepage.png)
+![CodeBuild Homepage](./imgs/codebuild_homepage.png)
 
 Next, fill in the following information to create a build project. Assume to leave any extraneous fields blank:
 * Project name: FYT-Website-App
@@ -21,7 +21,7 @@ Next, fill in the following information to create a build project. Assume to lea
   * Repository: Repository in my GitHub account
     * **Note that you will next have to connect your GitHub account to CodeBuild**
   * GitHub repository: FindYourTotem/fyt-website-react
-  ![CodeBuild Source](codebuild_source.png)
+  ![CodeBuild Source](./imgs/codebuild_source.png)
   *This is where you provide the source code of the project that you are trying to build.*
 * Environment
   * Managed image
@@ -30,15 +30,15 @@ Next, fill in the following information to create a build project. Assume to lea
     * Runtime version: aws/codebuild/nodejs:10.1.0
     * Image version: Always use the latest image for this runtime version
   * Service role: New service role
-  ![CodeBuild Environment](codebuild_environment.png)
+  ![CodeBuild Environment](./imgs/codebuild_environment.png)
   *This step is where you configure the environment used to build your project. More technically, CodeBuild uses this configuration to create a Docker image and place your source code into the Docker image to build the project. See [here](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html) for more details.*
 * Buildspec
   * Build specifications: Use a buildspec file
-  ![CodeBuild Buildspec](codebuild_buildspec.png)
+  ![CodeBuild Buildspec](./imgs/codebuild_buildspec.png)
   *Later we will create a buildspec.yml file, and place the file into the base directory of the repository. This file provides a set of configurations/commands to actually build the project using the source code and environment specified above.*
 * Artifacts
   * Type: No artifacts
-  ![CodeBuild Artifacts](codebuild_artifacts.png)
+  ![CodeBuild Artifacts](./imgs/codebuild_artifacts.png)
   * *Normally we would use this step to upload the compiled files onto S3, but I had trouble configuring this step so that it uploads the correct file structure and thereby properly loads the website. Instead of using this step, I found it easier to include a `aws s3 sync --delete build/` post_build command within the "buildspec.yml" file that also does the upload (which is in the next section of this tutorial).*
 
 Next, select "Create build project" to create your project.
@@ -77,19 +77,19 @@ More specifically, CodeBuild creates an image with the environment specified ear
 Since we are using an `aws s3 sync` command within the buildspec.yml file instead of the Artifact step in CodeBuild, we also have to update the CodeBuild service role so that the buildspec.yml commands have the permission necessary to access and modify the S3 bucket.
 
 First, select your project within the AWS Console:
-![Step 1](codebuild_role1.png)
+![Step 1](./imgs/codebuild_role1.png)
 Next, select "Build details":
-![Step 2](codebuild_role2.png)
+![Step 2](./imgs/codebuild_role2.png)
 Next, select the service role used to execute the CodeBuild project:
-![Step 3](codebuild_role3.png)
+![Step 3](./imgs/codebuild_role3.png)
 Lastly, select "Attach policies" and attach the "AmazonS3FullAccess" policy to your service role:
-![Step 4](codebuild_role4.png)
+![Step 4](./imgs/codebuild_role4.png)
 
 ### Testing the build
 
 After loading buildspec.yml file into the repository, you can test the build by first selecting the build project and selecting "Start build" (keeping all defaults).
-![Select Project](codebuild_role1.png)
-![Start Build](codebuild_test.png)
+![Select Project](./imgs/codebuild_role1.png)
+![Start Build](./imgs/codebuild_test.png)
 
 ## Phase 3: Create a CodePipeline Project
 
@@ -103,20 +103,20 @@ Next, fill in the following information to create a CodePipeline project:
 * Service role: New service role
 * Check: Allow AWS CodePipeline to create a service role so it can be used with this new pipeline
 * Artifact store: Default location
-  ![Pipeline Settings](codepipeline_settings.png)
+  ![Pipeline Settings](./imgs/codepipeline_settings.png)
 * Source provider: GitHub
   * Connect to GitHub and select the "FindYourTotem/fyt-website-react" repository
   * Branch: master
   * Change detection options: GitHub webhooks
-![Pipeline Source](codepipeline_source.png)
+![Pipeline Source](./imgs/codepipeline_source.png)
   *This will setup a webhook so that CodePipeline would be notified when changes are made to the master branch. You must have [Admin access](https://help.github.com/articles/adding-outside-collaborators-to-repositories-in-your-organization/) to the GitHub repository in order to use GitHub webhooks.*
 * Build provider:
   * AWS CodeBuild
   * Project name: FYT-Website-App
-  ![Pipeline Build](codepipeline_build.png)
+  ![Pipeline Build](./imgs/codepipeline_build.png)
 * Deploy
   * Skip
-  ![Pipeline Deploy](codepipeline_deploy.png)
+  ![Pipeline Deploy](./imgs/codepipeline_deploy.png)
   *We don't really have a "deploy" stage for our project (since we technically "deployed" our project by moving the files onto S3). This stage is normally used for projects where you also have to run/execute the code you build (ex: for project where you're creating a docker image, you would first build/upload the docker image through CodeBuild, and then you'd run and execute the image through CodeDeploy).*
 * Review settings and select "Create Pipeline"
 
