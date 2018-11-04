@@ -47,7 +47,7 @@ Next, select "Create build project" to create your project.
 
 After creating the CodeBuild project, create a buildspec.yml file and place it into the base directory of the repository. This provides commands to CodeBuild on how to build the project. Here's an example buildspec.yml file:
 
-** Note: Be sure to replace `<S3 location>` with the location of the S3 bucket that the website is hosted.**
+**Note: Be sure to replace `<S3 location>` with the location of the S3 bucket that the website is hosted.**
 
 ```
 version: 0.2
